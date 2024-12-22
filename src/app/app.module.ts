@@ -10,7 +10,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
-import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { Breadcrumb, BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { CarouselModule } from 'primeng/carousel';
@@ -91,17 +91,22 @@ import { CardModule } from 'primeng/card';
 import { BlockUIModule } from 'primeng/blockui';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import {  HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './pages/auth/login/login.component';
-import { RegisterComponent } from './pages/auth/register/register.component';
-
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { LoaderComponent } from './components/loader/loader.component';
+import { TokenInterceptor } from './interceptors/token.interceptor';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { HomeComponent } from './pages/home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
     LoginComponent,
-    RegisterComponent
+    LoaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -109,7 +114,8 @@ import { RegisterComponent } from './pages/auth/register/register.component';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    
+    ReactiveFormsModule,
+
     //#region PrimeNG
     AvatarModule,
     AccordionModule,
@@ -195,10 +201,19 @@ import { RegisterComponent } from './pages/auth/register/register.component';
     TreeTableModule,
     AnimateModule,
     CardModule,
-    PanelMenuModule
+    PanelMenuModule,
+    PasswordModule,
+    InputTextModule,
+    FloatLabelModule,
+    InputGroupModule,
+    InputGroupAddonModule,
     //#endregion
   ],
-  providers: [MessageService, HttpClientModule],
+  providers: [
+    provideHttpClient(
+      withInterceptors([TokenInterceptor])
+    ),
+    MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

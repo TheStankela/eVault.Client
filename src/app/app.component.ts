@@ -11,20 +11,30 @@ export class AppComponent {
 
   sideBarItems: MenuItem[];
   settingsItems: MenuItem[];
+  breadCrumbItems: MenuItem[] | undefined;
+  homeBreadCrumbItem: MenuItem | undefined;
+  isLoggedIn: boolean = false;
 
-  isAuthenticated: boolean;
+  constructor(public authService: AuthService) {}
 
-  constructor(private authService: AuthService) {}
+  ngOnInit() {  
+    this.authService.getCurrentUser().subscribe();  
 
-  ngOnInit() {
+    this.authService.isLoggedIn.subscribe((isLoggedIn) => {
+        this.isLoggedIn = isLoggedIn;
+    });
+
     this.setupMenuItems();
-
-    this.isAuthenticated = true;
   }
 
   setupMenuItems(){
     this.getSidebarItems();
     this.getSettingsItems();
+    this.setupBreadcrumbs();
+  }
+
+  setupBreadcrumbs(){
+    this.breadCrumbItems = [{ icon: 'pi pi-home', route: '/installation' }, { label: 'Components' }, { label: 'Form' }, { label: 'InputText', route: '/inputtext' }];
   }
 
   getSidebarItems(){

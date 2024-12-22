@@ -1,1 +1,53 @@
-<p>login works!</p>
+<div class="w-full h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 flex items-center justify-center">
+    <div class="w-[350px] h-[430px] bg-white rounded-xl shadow-lg shadow-gray-500 p-8">
+        <h2 class="text-3xl text-center font-extrabold text-gray-700 mb-8">Login</h2>
+        <p-splitter></p-splitter>
+        <form [formGroup]="loginForm" class="pt-7">
+            <div class="flex flex-column gap-2">
+                <div class="form-control mt-3 w-full relative">
+                    <label for="email" class="text-lg">Email</label>
+                    <input id="email" type="email" pInputText formControlName="email" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                    <small *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched" 
+                           class="text-red-500 absolute text-xs bottom-[-20px] left-0 mt-1">
+                        This field is required.
+                    </small>
+                    <small *ngIf="loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched && applyValidation" 
+                           class="text-red-500 absolute text-xs bottom-[-20px] left-0 mt-1">
+                        Please enter a valid email address.
+                    </small>
+                </div>
+            </div>
+            
+            <div class="flex flex-column gap-2">
+                <div class="form-control w-full mt-10 relative">
+                    <label for="password" class="text-lg">Password</label>
+                    <p-password formControlName="password" [feedback]="false" [toggleMask]="true"
+                                [style]="{'width':'100%'}"
+                                [inputStyle]="{'width':'100%'}"
+                                class="w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                    <small *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched" 
+                           class="text-red-500 absolute text-xs bottom-[-20px] left-0 mt-1">
+                        This field is required.
+                    </small>
+                    <small *ngIf="loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched && applyValidation" 
+                           class="text-red-500 absolute text-xs bottom-[-20px] left-0 mt-1">
+                        The minimum password length is 8 characters.
+                    </small>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <p-button 
+                    label="Login" 
+                    [loading]="loading"
+                    styleClass="text-lg"
+                    (onClick)="onSubmit()">
+                </p-button>
+            </div>
+        </form>
+        <div class="mt-6 text-center text-sm text-gray-500">
+            Forgot password? You can reset your password <a routerLink="/forgot-password" class="text-blue-600 hover:underline">here</a>.
+        </div>
+    </div>
+</div>
