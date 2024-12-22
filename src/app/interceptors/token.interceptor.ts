@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
 import { AuthService } from './../services/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
@@ -46,11 +46,8 @@ const handleUnauthorizedError = (
   const refreshToken = authService.getRefreshToken();
 
   if (!refreshToken) {
-    if (!isLoginPage) {
-      toasterService.warn("Session expired, Please login again");
-    }
     router.navigate(['login']);
-    return throwError(() => new Error('Refresh token missing'));
+    return throwError(() => new HttpErrorResponse({status: HttpStatusCode.Unauthorized}));
   }
 
   const tokenDto = new TokenDto();
@@ -62,9 +59,9 @@ const handleUnauthorizedError = (
 
       if (!data.accessToken || !data.refreshToken) {
         // If the token renewal doesn't return valid tokens, log out
-        if (!isLoginPage) {
-          toasterService.warn("Invalid session, Please login again");
-        }
+        // if (!isLoginPage) {
+        //   toasterService.warn("Invalid session, Please login again");
+        // }
         router.navigate(['login']);
         return throwError(() => new Error('Token renewal failed'));
       }
@@ -79,11 +76,11 @@ const handleUnauthorizedError = (
       return next(req);
     }),
     catchError((err) => {
-      if (!isLoginPage) {
-        toasterService.warn("Token is expired, please login again.");
-      }
+      // if (!isLoginPage) {
+      //   toasterService.warn("Token is expired, please login again.");
+      // }
       router.navigate(['login']);
-      return throwError(() => new Error('Token expired'));
+      return throwError(() => new HttpErrorResponse({status: HttpStatusCode.Unauthorized, statusText: 'Token expired'}));
     })
   );
 };

@@ -1,18 +1,20 @@
 import { Injectable, OnInit } from '@angular/core';
 import { Settings } from '../../settings';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpStatusCode} from '@angular/common/http';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from '../models/user';
 import { TokenDto } from '../models/tokenModel';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, catchError, map, throwError } from 'rxjs';
 import { ToasterService } from './toaster.service';
+import { BaseService } from './base.service';
+import { Result } from '../common/result';
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class AuthService implements OnInit{
+export class AuthService extends BaseService implements OnInit{
 
   public currentUser: User = new User();
 
@@ -20,7 +22,8 @@ export class AuthService implements OnInit{
 
   baseURL = Settings.ApiUrl;
 
-  constructor(private http: HttpClient, private router: Router, private toasterService: ToasterService) {
+  constructor(private http: HttpClient, private router: Router, toasterService: ToasterService) {
+    super(toasterService);
   }
 
   ngOnInit(): void {
@@ -38,17 +41,21 @@ export class AuthService implements OnInit{
       }));
   }
 
-  getCurrentUser(){
-    return this.http.get<User>(`${this.baseURL}/api/user/current`)
-    .pipe(map(res => {
-      this.currentUser = res;
-
-      if(res){
-        this.setIsLoggedIn(true);
-      }
-
-      return res;
-    }));
+  getCurrentUser() {
+    return this.http.get<Result<User>>(`${this.baseURL}/api/user/current`)
+      .pipe(
+        map(res => {
+          if (res.statusCode === HttpStatusCode.Ok) {
+            this.currentUser = res.data;
+            this.setIsLoggedIn(true);
+          }
+          return res;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.handleError(error);
+          return throwError(() => error);
+        })
+      );
   }
 
   refreshToken(apiToken : TokenDto){

@@ -10,3 +10,14 @@ export const AuthMessages = {
     LoginSuccess: 'Logged in succesfully.',
     InvalidCredentials: 'Email or password is not correct.'
 };
+
+export const ResultMessages = {
+  Success: 'Logged out succesfully.',
+  BadRequest: 'Logged out succesfully.',
+  Conflict: 'Logged in succesfully.',
+  InternalServerError: 'Logged in succesfully.',
+  NotFound: 'Resource not found.',
+  UnexpectedError: 'An unexpected error occurred.',
+  Forbidden: 'You don’t have permission to access this resource.',
+  Unauthorized: 'You are not logged in.'
+};
