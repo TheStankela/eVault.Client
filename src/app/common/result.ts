@@ -3,7 +3,6 @@ import { HttpStatusCode } from '@angular/common/http';
 export class Result<T> {
   data?: T;
   error?: Error;
-  resultType: ResultType;
   statusCode: HttpStatusCode;
   isSuccess: boolean;
 }
