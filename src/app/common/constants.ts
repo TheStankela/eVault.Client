@@ -21,3 +21,9 @@ export const ResultMessages = {
   Forbidden: 'You don’t have permission to access this resource.',
   Unauthorized: 'You are not logged in.'
 };
+
+export const HubResources = {
+  ConnectionStarted: 'Hub connection established.',
+  ConnectionError: 'Error while connecting to the hub.',
+  HubConnectionStartedState: 'HubConnectionStarted',
+} 

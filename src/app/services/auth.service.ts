@@ -9,6 +9,11 @@ import { BehaviorSubject, catchError, map, throwError } from 'rxjs';
 import { ToasterService } from './toaster.service';
 import { BaseService } from './base.service';
 import { Result } from '../common/result';
+import { AuthMessages, HubResources } from '../common/constants';
+import { SignalRService } from './signalr.service';
+import { HubConnectionState } from '@microsoft/signalr';
+import { Connect } from 'vite';
+import { Connection } from '../models/connection';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +27,23 @@ export class AuthService extends BaseService implements OnInit{
 
   baseURL = Settings.ApiUrl;
 
-  constructor(private http: HttpClient, private router: Router, toasterService: ToasterService) {
+  constructor(private http: HttpClient, private router: Router, private signalRService: SignalRService, toasterService: ToasterService) {
     super(toasterService);
+
+    if (this.getIsLoggedIn()) {
+        if (this.signalRService.hubConnection?.state == HubConnectionState.Connected) {
+          this.onReAuthenticate();
+          this.reAuthenticate();
+        }
+        else {
+          this.signalRService.stateAsObservable().subscribe((obj: any) => {
+              if (obj.type == HubResources.HubConnectionStartedState) {
+                this.onReAuthenticate();
+                this.reAuthenticate();
+              }
+          });
+        }
+    }
   }
 
   ngOnInit(): void {
@@ -47,8 +67,9 @@ export class AuthService extends BaseService implements OnInit{
         map(res => {
           if (res.statusCode === HttpStatusCode.Ok) {
             this.currentUser = res.data;
+
             this.setIsLoggedIn(true);
-          }
+            }
           return res;
         }),
         catchError((error: HttpErrorResponse) => {
@@ -68,7 +89,7 @@ export class AuthService extends BaseService implements OnInit{
 
     this.setIsLoggedIn(false);
 
-    this.toasterService.success('Logout successfull!')
+    this.toasterService.success(AuthMessages.LogoutSuccess)
 
     this.router.navigate(['login'])
   }
@@ -100,5 +121,17 @@ export class AuthService extends BaseService implements OnInit{
   
   getIsLoggedIn(): boolean{
     return !!localStorage.getItem('token');
+  }
+
+  //SignalR
+  reAuthenticate() {
+    this.signalRService.hubConnection.invoke("ReAuthenticate",)
+    .catch(err => console.error(err));
+  }
+
+  onReAuthenticate() {
+    this.signalRService.hubConnection.on("ReAuthenticate", (connection: Connection) => {
+      this.signalRService.currentConnectionData = connection;
+    });
   }
 }

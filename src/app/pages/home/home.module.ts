@@ -1,29 +1,34 @@
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { HomeComponent } from './home.component';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-
-// Import PrimeNG modules
+import { AppRoutingModule } from '../../app-routing.module';
+import { HomeRoutingModule } from './home-routing.module';
 import { AccordionModule } from 'primeng/accordion';
+import { AnimateModule } from 'primeng/animate';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
-import { Breadcrumb, BreadcrumbModule } from 'primeng/breadcrumb';
+import { BlockUIModule } from 'primeng/blockui';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
+import { CardModule } from 'primeng/card';
 import { CarouselModule } from 'primeng/carousel';
 import { CascadeSelectModule } from 'primeng/cascadeselect';
 import { ChartModule } from 'primeng/chart';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ChipModule } from 'primeng/chip';
 import { ChipsModule } from 'primeng/chips';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ColorPickerModule } from 'primeng/colorpicker';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { DataViewModule } from 'primeng/dataview';
-import { VirtualScrollerModule } from 'primeng/virtualscroller';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { DockModule } from 'primeng/dock';
@@ -33,14 +38,17 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { EditorModule } from 'primeng/editor';
 import { FieldsetModule } from 'primeng/fieldset';
 import { FileUploadModule } from 'primeng/fileupload';
+import { FloatLabelModule } from 'primeng/floatlabel';
 import { GalleriaModule } from 'primeng/galleria';
+import { ImageModule } from 'primeng/image';
 import { InplaceModule } from 'primeng/inplace';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputMaskModule } from 'primeng/inputmask';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { ImageModule } from 'primeng/image';
 import { KnobModule } from 'primeng/knob';
 import { ListboxModule } from 'primeng/listbox';
 import { MegaMenuModule } from 'primeng/megamenu';
@@ -56,6 +64,7 @@ import { PanelModule } from 'primeng/panel';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { PasswordModule } from 'primeng/password';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { RatingModule } from 'primeng/rating';
 import { ScrollerModule } from 'primeng/scroller';
@@ -71,8 +80,8 @@ import { SpinnerModule } from 'primeng/spinner';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { SplitterModule } from 'primeng/splitter';
 import { StepsModule } from 'primeng/steps';
-import { TabMenuModule } from 'primeng/tabmenu';
 import { TableModule } from 'primeng/table';
+import { TabMenuModule } from 'primeng/tabmenu';
 import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
 import { TerminalModule } from 'primeng/terminal';
@@ -82,35 +91,21 @@ import { ToastModule } from 'primeng/toast';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
-import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
 import { TreeModule } from 'primeng/tree';
 import { TreeSelectModule } from 'primeng/treeselect';
 import { TreeTableModule } from 'primeng/treetable';
-import { AnimateModule } from 'primeng/animate';
-import { CardModule } from 'primeng/card';
-import { BlockUIModule } from 'primeng/blockui';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { MessageService } from 'primeng/api';
-import {  HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './pages/auth/login/login.component';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { TokenInterceptor } from './interceptors/token.interceptor';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { TriStateCheckboxModule } from 'primeng/tristatecheckbox';
+import { VirtualScrollerModule } from 'primeng/virtualscroller';
+
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-  ],
+  declarations: [HomeComponent, LoaderComponent],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
+    CommonModule,
+    FormsModule,
     FormsModule,
     ReactiveFormsModule,
+    HomeRoutingModule,
 
     //#region PrimeNG
     AvatarModule,
@@ -204,12 +199,6 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
     InputGroupModule,
     InputGroupAddonModule,
     //#endregion
-  ],
-  providers: [
-    provideHttpClient(
-      withInterceptors([TokenInterceptor])
-    ),
-    MessageService],
-  bootstrap: [AppComponent]
+  ]
 })
-export class AppModule { }
+export class HomeModule { }

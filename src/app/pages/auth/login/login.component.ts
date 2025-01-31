@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import '../../../components/loaderExtensions'
 import { AuthMessages } from '../../../common/constants';
 import { ToasterService } from '../../../services/toaster.service';
+import { SignalRService } from '../../../services/signalr.service';
 
 @Component({
   selector: 'app-login',
@@ -26,6 +27,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private toasterSerice: ToasterService,
+    private signalRService: SignalRService,
     private router: Router
   ) {}
 
@@ -58,7 +60,8 @@ export class LoginComponent {
     .WithLoader(this._loading)
     .subscribe({
       next: () => {
-        this.authService.getCurrentUser().subscribe();
+        this.signalRService.hubConnection.invoke("Authenticate")
+        .catch(err => console.error(err));
 
         this.toasterSerice.success(AuthMessages.LoginSuccess);
         this.router.navigate([''])
